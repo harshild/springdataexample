@@ -24,13 +24,16 @@ import java.util.Properties;
 public class SpringConfig {
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean(DataSource dataSource){
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource){
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(dataSource);
         factory.setPackagesToScan("vw.training");
         factory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
-        factory.setJpaProperties(hibernateProperties());
+        Properties jpaProperties = new Properties();
+        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create");
+        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        jpaProperties.setProperty("hibernate.globally_quoted_identifiers", "true");
+        factory.setJpaProperties(jpaProperties);
         return factory;
     }
 
@@ -44,15 +47,5 @@ public class SpringConfig {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringConfig.class,args);
-    }
-
-    Properties hibernateProperties() {
-        return new Properties() {
-            {
-                setProperty("hibernate.hbm2ddl.auto", "create");
-                setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-                setProperty("hibernate.globally_quoted_identifiers", "true");
-            }
-        };
     }
 }
